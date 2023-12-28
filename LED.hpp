@@ -28,6 +28,11 @@ public:
     {
         return s_led_state;
     }
+	
+    void set_state(uint32_t s_led_state)
+    {
+        this->s_led_state = s_led_state;
+    }
 };
 
 #endif
