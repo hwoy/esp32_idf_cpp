@@ -7,6 +7,7 @@
 #include <thread>
 
 namespace esp32 {
+#include "GPIO.hpp"
 #include "LED.hpp"
 }
 

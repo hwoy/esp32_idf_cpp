@@ -17,7 +17,7 @@ extern "C" [[noreturn]] void app_main(void)
     auto led = esp32::CBlink_Led(GPIO_NUM_2);
 
     while (true) {
-        led.state_blink(1s);
+        led.blink(1s);
     }
 }
 
