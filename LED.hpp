@@ -1,11 +1,6 @@
 #ifndef __LED_H__
 #define __LED_H__
 
-#include <driver/gpio.h>
-
-#include <chrono>
-#include <thread>
-
 class CLed {
 protected:
     const gpio_num_t gpio_num;
@@ -31,48 +26,48 @@ protected:
     const CLed led;
     uint8_t s_led_state;
 
-    void blink_action_state_led(void);
-
 public:
-    CBlink_Led(CLed led);
-    CBlink_Led(gpio_num_t gpio_num);
+    CBlink_Led(CLed led, uint8_t s_led_state = 1);
+    CBlink_Led(gpio_num_t gpio_num, uint8_t s_led_state = 1);
 
     template <typename R, typename P>
-    void blink(std::chrono::duration<R, P> delay);
+    uint8_t state_blink(std::chrono::duration<R, P> delay);
 
     const CLed& get_led() const;
+    uint8_t get_led_state() const;
 };
 
-CBlink_Led::CBlink_Led(CLed led)
+CBlink_Led::CBlink_Led(CLed led, uint8_t s_led_state)
     : led(led)
-    , s_led_state(0)
+    , s_led_state(s_led_state)
 {
     gpio_reset_pin(led.get_gpio_num());
     gpio_set_direction(led.get_gpio_num(), GPIO_MODE_OUTPUT);
 }
 
-CBlink_Led::CBlink_Led(gpio_num_t gpio_num)
-    : CBlink_Led(CLed(gpio_num))
+CBlink_Led::CBlink_Led(gpio_num_t gpio_num, uint8_t s_led_state)
+    : CBlink_Led(CLed(gpio_num), s_led_state)
 {
-}
-
-void CBlink_Led::blink_action_state_led(void)
-{
-    gpio_set_level(led.get_gpio_num(), s_led_state);
-    s_led_state = !s_led_state;
 }
 
 template <typename R, typename P>
-void CBlink_Led::blink(std::chrono::duration<R, P> delay)
+uint8_t CBlink_Led::state_blink(std::chrono::duration<R, P> delay)
 {
-    blink_action_state_led();
+    gpio_set_level(led.get_gpio_num(), s_led_state);
     std::this_thread::sleep_for(delay);
-	blink_action_state_led();
+
+    s_led_state = !s_led_state;
+    return !s_led_state;
 }
 
 const CLed& CBlink_Led::get_led() const
 {
     return led;
+}
+
+uint8_t CBlink_Led::get_led_state() const
+{
+    return s_led_state;
 }
 
 #endif
